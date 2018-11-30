@@ -68,7 +68,6 @@ public class RegisterActivity extends AppCompatActivity {
             password.setError("Password is invalid");
         }
         else{
-            Toast.makeText(this, "data saved", Toast.LENGTH_SHORT).show();
             //save name.getText().toString()),email.getText().toString()),password.getText().toString()),user_type
         }
     }
