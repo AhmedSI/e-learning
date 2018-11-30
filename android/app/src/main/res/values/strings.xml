@@ -3,9 +3,6 @@
     <string name="password_text_abel">Password</string>
     <string name="login_button_label">Login</string>
     <string name="email_text_label">Email</string>
-    <string name="nameerr">Please Enter Valid Name</string>
-    <string name="emailerr">Please Enter Valid Email</string>
-    <string name="passworderr">Please Enter Valid Password</string>
 
     <string-array name="type">
         <item>Choose your type</item>

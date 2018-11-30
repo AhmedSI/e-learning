@@ -10,6 +10,8 @@ import android.util.Patterns;
 import com.eng.asu.adaptivelearning.view.LoginActivity;
 import com.eng.asu.adaptivelearning.view.MainActivity;
 
+import java.util.regex.Pattern;
+
 public class UserViewModel extends AndroidViewModel {
 
     public UserViewModel(@NonNull Application application) {
@@ -34,5 +36,10 @@ public class UserViewModel extends AndroidViewModel {
 
     public boolean isValidEmail(String email) {
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public boolean isValidName(String name) {
+        Pattern name_pattern = Pattern.compile("[a-zA-Z\\s]+");
+        return !TextUtils.isEmpty(name) && name_pattern.matcher(name).matches();
     }
 }
