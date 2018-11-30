@@ -71,6 +71,4 @@ public class RegisterActivity extends AppCompatActivity {
             //save name.getText().toString()),email.getText().toString()),password.getText().toString()),user_type
         }
     }
-
-
 }
