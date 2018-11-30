@@ -1,10 +1,12 @@
 package com.eng.asu.adaptivelearning.view;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.eng.asu.adaptivelearning.EditTextWatcher;
 import com.eng.asu.adaptivelearning.R;
@@ -39,4 +41,9 @@ public class LoginActivity extends AppCompatActivity {
             loginBinding.passwordEditText.setError("Password is invalid");
         }
     }
+    public void onRegisterClicked() {
+        Intent intent = new Intent(this , RegisterActivity.class);
+        startActivity(intent);
+    }
+
 }
