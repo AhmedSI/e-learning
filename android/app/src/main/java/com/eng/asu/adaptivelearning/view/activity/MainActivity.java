@@ -14,7 +14,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initializeActivity() {
-        mainBinding.coursesList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+//        dividerItemDecoration.setDrawable(this.getResources().getDrawable(R.drawable.divider));
+//        mainBinding.coursesList.addItemDecoration(dividerItemDecoration);
         mainBinding.coursesList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         mainBinding.coursesList.setAdapter(new CoursesAdapter(this, userViewModel.getCourses()));
     }

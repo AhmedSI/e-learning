@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.eng.asu.adaptivelearning.R;
 import com.eng.asu.adaptivelearning.viewmodel.UserViewModel;
@@ -33,7 +34,7 @@ public class RegisterActivity extends AppCompatActivity {
         type = findViewById(R.id.type);
         signup = findViewById(R.id.signup);
 
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(RegisterActivity.this, android.R.layout.simple_list_item_1,
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(RegisterActivity.this,R.layout.spinner_item,
                 getResources().getStringArray(R.array.type));
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         type.setAdapter(spinnerAdapter);
@@ -58,7 +59,9 @@ public class RegisterActivity extends AppCompatActivity {
             email.setError("Email address invalid");
         } else if (!userViewModel.isValidPassword(password.getText().toString())) {
             password.setError("Password is invalid");
-        } else {
+        } else if (type.getSelectedItemPosition() <1)
+            Toast.makeText(this, "Please choose your type", Toast.LENGTH_SHORT).show();
+        else{
             //TODO - Register users in the server
             //save name.getText().toString()),email.getText().toString()),password.getText().toString()),user_type
         }

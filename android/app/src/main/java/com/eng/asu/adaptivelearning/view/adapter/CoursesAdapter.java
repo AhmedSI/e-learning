@@ -2,7 +2,6 @@ package com.eng.asu.adaptivelearning.view.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.eng.asu.adaptivelearning.R;
@@ -30,7 +29,7 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
     @Override
     public CoursesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         listBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.courses_list_item, parent, false);
-        return new CoursesViewHolder(listBinding.parent);
+        return new CoursesViewHolder(listBinding);
     }
 
     @Override
@@ -44,14 +43,17 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
     }
 
     class CoursesViewHolder extends RecyclerView.ViewHolder {
-        CoursesViewHolder(@NonNull View itemView) {
-            super(itemView);
+        CoursesListItemBinding binding;
+
+        CoursesViewHolder(@NonNull CoursesListItemBinding binding) {
+            super(binding.parent);
+            this.binding = binding;
         }
 
         void bind(Course course) {
-            listBinding.courseBackground.setBackgroundResource(course.getBackground());
-            listBinding.courseName.setText(course.getName());
-            listBinding.courseInstructor.setText(course.getInstructor().getName());
+            binding.courseBackground.setBackground(context.getResources().getDrawable(course.getBackground()));
+            binding.courseName.setText(course.getName());
+            binding.courseInstructor.setText(course.getInstructor().getName());
         }
     }
 }

@@ -8,6 +8,17 @@ public class User {
     private UserType type;
     private String accessToken;
 
+    public User() {
+    }
+
+    public User(int id, String name, String email, UserType type, String accessToken) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.type = type;
+        this.accessToken = accessToken;
+    }
+
     public int getId() {
         return id;
     }

@@ -17,9 +17,9 @@
         <item name="colorControlHighlight">@color/mintGreen</item>
     </style>
 
-    <style name="buttonStyle">
+    <style name="buttonStyle" parent="Base.TextAppearance.AppCompat.Widget.Button.Borderless.Colored">
         <item name="android:background">@drawable/button_background</item>
         <item name="android:textColor">@color/button_text_color</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">22sp</item>
     </style>
 </resources>

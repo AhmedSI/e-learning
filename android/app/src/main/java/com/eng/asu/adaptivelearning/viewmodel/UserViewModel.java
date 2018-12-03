@@ -5,14 +5,18 @@ import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.eng.asu.adaptivelearning.LearningApplication;
+import com.eng.asu.adaptivelearning.R;
 import com.eng.asu.adaptivelearning.model.Course;
 import com.eng.asu.adaptivelearning.model.User;
+import com.eng.asu.adaptivelearning.model.UserType;
 import com.eng.asu.adaptivelearning.preferences.UserAccountStorage;
 import com.eng.asu.adaptivelearning.view.activity.LoginActivity;
 import com.eng.asu.adaptivelearning.view.activity.MainActivity;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 import javax.inject.Inject;
@@ -68,7 +72,16 @@ public class UserViewModel extends AndroidViewModel {
     }
 
     public List<Course> getCourses() {
-        //TODO - Mona Medhat
-        return Collections.emptyList();
+        List<Course> courses = new ArrayList<>();
+        for (int i = 1; i <= 10; i++)
+            courses.add(new Course("Course number " + i, new User(i, "Dr.Number " + i, "", UserType.TEACHER, ""), getRandomBackground()));
+
+        return courses;
+    }
+
+    private int getRandomBackground() {
+        List<Integer> backgrounds = new ArrayList<>(3);
+        Collections.addAll(backgrounds, R.drawable.bg1, R.drawable.bg2, R.drawable.bg3);
+        return backgrounds.get(new Random().nextInt(3));
     }
 }
