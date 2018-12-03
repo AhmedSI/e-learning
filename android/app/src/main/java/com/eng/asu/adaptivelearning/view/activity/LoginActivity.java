@@ -1,17 +1,18 @@
-package com.eng.asu.adaptivelearning.view;
+package com.eng.asu.adaptivelearning.view.activity;
 
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AppCompatActivity;
 
 import com.eng.asu.adaptivelearning.EditTextWatcher;
 import com.eng.asu.adaptivelearning.R;
 import com.eng.asu.adaptivelearning.databinding.ActivityLoginBinding;
 import com.eng.asu.adaptivelearning.viewmodel.UserViewModel;
+import com.google.android.material.textfield.TextInputEditText;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
 
 public class LoginActivity extends AppCompatActivity {
     UserViewModel userViewModel;
@@ -32,11 +33,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginButtonClicked() {
-        if (!userViewModel.isValidEmail(loginBinding.emailEditText.getText().toString()))
+        String email = loginBinding.emailEditText.getText().toString();
+        String password = loginBinding.passwordEditText.getText().toString();
+        if (!userViewModel.isValidEmail(email))
             invalidInput(loginBinding.emailEditText, "Email address invalid");
-        else if (!userViewModel.isValidPassword(loginBinding.passwordEditText.getText().toString())) {
+        else if (!userViewModel.isValidPassword(password))
             invalidInput(loginBinding.passwordEditText, "Password is invalid");
-        } else {
+        else {
+            userViewModel.login(email,password);
             finish();
             startActivity(new Intent(this, MainActivity.class));
         }

@@ -16,4 +16,10 @@
         <item name="colorControlActivated">@color/mintGreen</item>
         <item name="colorControlHighlight">@color/mintGreen</item>
     </style>
+
+    <style name="buttonStyle">
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:textColor">@color/button_text_color</item>
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

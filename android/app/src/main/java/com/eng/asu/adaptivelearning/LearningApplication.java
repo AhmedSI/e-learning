@@ -10,6 +10,10 @@ public class LearningApplication extends Application {
 
     private static ApplicationComponents applicationComponent;
 
+    public static ApplicationComponents getApplicationComponent() {
+        return applicationComponent;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
