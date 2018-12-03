@@ -20,6 +20,22 @@ public class ControllerExeptionHandler {
 	{
 		return new ErrorMessage("400",e.getMessage());
 	}
+		@ResponseBody
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler
+	ErrorMessage exeption(DataIntegrityViolationException  e)
+	{
+		return new ErrorMessage("500",e.getMessage());
+	}
 	
+	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ExceptionHandler
+	ErrorMessage exeption(NoSuchElementException  e)
+	{
+		return new ErrorMessage("500",e.getMessage());
+	}
+
 	
 }

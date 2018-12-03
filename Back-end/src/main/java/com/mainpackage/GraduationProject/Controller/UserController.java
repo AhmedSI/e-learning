@@ -31,11 +31,37 @@ UserService userservice;
 @PostMapping("/register")
 User create(@RequestBody User user) 
 {
-	if(user.getId() == 0 && user.getEmail() != null&& user.getName()!=null&&user.getPassword()!= null && user.getType() > 0 && user.getType() < 5)
-	return userservice.save(user);
-	else throw new ValidationException("Account not created");
+	
+	Optional<User> usercopy = userservice.findByEmail(user.getEmail());
+    
+     if (user.getEmail()==null )
+	{
+		throw new ValidationException("invalid email");
+	}
+    
+     else if(usercopy.isPresent())   // to check that email is exist before or not
+    {
+    	throw new DataIntegrityViolationException ("this mail already exist") ;
+    }
+    
+	else if(user.getPassword()==null)
+	{	
+		throw new ValidationException("invalid password");	
+	}
+	else if(user.getName()==null)
+	{	
+		throw new ValidationException("invalid name");	
+	}
+	else if(user.getType()>3 || user.getType()<1)
+	{	
+		throw new ValidationException("invalid type");	
+	}
+	
+	else
+		return userservice.save(user);
 	
 }
+
 
 
 

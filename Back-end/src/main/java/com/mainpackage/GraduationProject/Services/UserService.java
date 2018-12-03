@@ -9,4 +9,6 @@ public interface UserService extends CrudRepository<User, Integer> {
 
 	
 	Iterable<User> findByEmailAndPassword (String email,String password);
+        Optional<User> findByEmail (String email);
+
  }
