@@ -1,10 +1,13 @@
 package com.mainpackage.GraduationProject.Controller;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.validation.ValidationException;
 
+import org.apache.tomcat.util.http.Parameters;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.mainpackage.GraduationProject.Model.User;
 import com.mainpackage.GraduationProject.Services.UserService;
+import com.mainpackage.GraduationProject.util.Constants;
 import com.mainpackage.GraduationProject.util.ErrorMessage;
 
 @RestController
@@ -27,14 +31,15 @@ import com.mainpackage.GraduationProject.util.ErrorMessage;
 public class UserController {
 	@Autowired
 UserService userservice;
+Constants parameters;
 
 @PostMapping("/register")
-User create(@RequestBody User user) 
+String create(@RequestParam(parameters.Email) String email,@RequestParam("name") String name,@RequestParam("password")String password,@RequestParam("type") int type ) 
 {
 	
-	Optional<User> usercopy = userservice.findByEmail(user.getEmail());
+	Optional<User> usercopy = userservice.findByEmail(email);
     
-     if (user.getEmail()==null )
+     if (email==null )
 	{
 		throw new ValidationException("invalid email");
 	}
@@ -44,24 +49,24 @@ User create(@RequestBody User user)
     	throw new DataIntegrityViolationException ("this mail already exist") ;
     }
     
-	else if(user.getPassword()==null)
+	else if(password==null||password.length()<8||password.length()>15||password.contains(" "))
 	{	
 		throw new ValidationException("invalid password");	
 	}
-	else if(user.getName()==null)
+	else if(name==null)
 	{	
 		throw new ValidationException("invalid name");	
 	}
-	else if(user.getType()>3 || user.getType()<1)
+	else if(type>3 || type<1)
 	{	
 		throw new ValidationException("invalid type");	
 	}
 	
 	else
-		return userservice.save(user);
+		return("success");
+		//return userservice.save(user);
 	
 }
-
 
 
 
@@ -94,6 +99,22 @@ Optional<User> findById(@PathVariable Integer id)
 	 return userservice.findById(id);
 }
 
+@GetMapping("/user/mail")
+public User retrieveUser (@RequestParam("email") String email)
+{
+	Optional<User> user = userservice.findByEmail(email);
+    if(user.isPresent())
+    {
+    	System.out.println("not valid");
+    }
+    else if (!user.isPresent())
+    {
+    	System.out.println(" valid");
+    	throw new NoSuchElementException ("not found") ;
+    	}
+return user.get();
+}
+
 
 
 @GetMapping("/user/login")
@@ -101,6 +122,8 @@ Optional<User> findById(@PathVariable Integer id)
 	{
 	return userservice.findByEmailAndPassword(email, password);
 	}
+
+
 
 	
 }
