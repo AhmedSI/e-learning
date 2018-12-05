@@ -1,33 +1,25 @@
-signup 
-path :localhot:8080/api/auth/signin
-post body: json request
+Login
+@Get request
+path :localhot:8080/api/auth/signin?email=email@something.com&password=12345
+
+return code 200 if success along with the following JSON and error code for wrong email or password
 {
-  "username":"",
-  "name":"",
-  password:"",
-  email:"",
-  type: integer from 1 to 4
+  "token":asdofjosadiphsfjadl;fa
+  ,"user":
+      {
+        "name":muhammed,
+        "password":asdfsafa!34321%^8*&,
+        "type":1
+        "email":email@email.com
+      }
 }
 
-return: json response
-{
-  success: true or false,
-  message: ""
-}
+Sign up
+@Post
+path localhot:8080/api/auth/signup?name=muhammed&email=something@something.com
 
-login
-path :localhot:8080/api/auth/signup
-pos body: json request
-{
-  "usernameOrEmail":"",
-  password:"",
-  }
-
-return: json response
-{
-  success: true or false,
-  message: ""
-}
+return opcode 200 if sucess or other codes for different parameters validation (300 for example if mail exists)
+and any body message you want
 
 notes :
 -paths can be edited if wanted 
