@@ -1,0 +1,35 @@
+signup 
+path :localhot:8080/api/auth/signin
+post body: json request
+{
+  "username":"",
+  "name":"",
+  password:"",
+  email:"",
+  type: integer from 1 to 4
+}
+
+return: json response
+{
+  success: true or false,
+  message: ""
+}
+
+login
+path :localhot:8080/api/auth/signup
+pos body: json request
+{
+  "usernameOrEmail":"",
+  password:"",
+  }
+
+return: json response
+{
+  success: true or false,
+  message: ""
+}
+
+notes :
+-paths can be edited if wanted 
+-valditions handled 
+-encryption handeled
