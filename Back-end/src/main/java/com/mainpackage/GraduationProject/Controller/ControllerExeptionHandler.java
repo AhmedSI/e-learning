@@ -1,7 +1,12 @@
 package com.mainpackage.GraduationProject.Controller;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.NoSuchElementException;
+
 import javax.validation.ValidationException;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,14 +25,21 @@ public class ControllerExeptionHandler {
 	{
 		return new ErrorMessage("400",e.getMessage());
 	}
-		@ResponseBody
+	
+	@ResponseBody
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler
 	ErrorMessage exeption(DataIntegrityViolationException  e)
 	{
 		return new ErrorMessage("500",e.getMessage());
 	}
-	
+	@ResponseBody
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler
+	ErrorMessage exeption(NumberFormatException  e)
+	{
+		return new ErrorMessage("400",e.getMessage());
+	}
 	
 	@ResponseBody
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -36,6 +48,5 @@ public class ControllerExeptionHandler {
 	{
 		return new ErrorMessage("500",e.getMessage());
 	}
-
 	
 }

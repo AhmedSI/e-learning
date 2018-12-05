@@ -2,6 +2,8 @@ package com.mainpackage.GraduationProject.Controller;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.validation.ValidationException;
 
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,15 +34,18 @@ import com.mainpackage.GraduationProject.util.ErrorMessage;
 public class UserController {
 	@Autowired
 UserService userservice;
-Constants parameters;
 
 @PostMapping("/register")
-String create(@RequestParam(parameters.Email) String email,@RequestParam("name") String name,@RequestParam("password")String password,@RequestParam("type") int type ) 
+
+ErrorMessage create(@RequestParam(Constants.Email) String email,@RequestParam(Constants.Name) String name,@RequestParam(Constants.Password)String password,@RequestParam(Constants.Type) int type ) 
 {
-	
-	Optional<User> usercopy = userservice.findByEmail(email);
+	        final Pattern VALID_EMAIL_ADDRESS_REGEX = 
+		    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
+	        Optional<User> usercopy = userservice.findByEmail(email);
     
-     if (email==null )
+	        
+     if (email==null|| !matcher.find())
 	{
 		throw new ValidationException("invalid email");
 	}
@@ -53,19 +59,27 @@ String create(@RequestParam(parameters.Email) String email,@RequestParam("name")
 	{	
 		throw new ValidationException("invalid password");	
 	}
-	else if(name==null)
+	else if(name==null || name.length()<3 )
 	{	
 		throw new ValidationException("invalid name");	
 	}
-	else if(type>3 || type<1)
+	
+	else if(type>4||type<1)
 	{	
 		throw new ValidationException("invalid type");	
 	}
 	
 	else
-		return("success");
-		//return userservice.save(user);
-	
+	{
+		User user =new User();
+		user.setName(name);
+		user.setEmail(email);
+		user.setPassword(password);
+		user.setType(type);
+		userservice.save(user);
+		return new ErrorMessage(ErrorMessage.success, "Account created successfuly");
+		
+	}
 }
 
 
