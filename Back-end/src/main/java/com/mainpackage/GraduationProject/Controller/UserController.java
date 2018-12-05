@@ -39,11 +39,15 @@ UserService userservice;
 
 ErrorMessage create(@RequestParam(Constants.Email) String email,@RequestParam(Constants.Name) String name,@RequestParam(Constants.Password)String password,@RequestParam(Constants.Type) int type ) 
 {
-	        final Pattern VALID_EMAIL_ADDRESS_REGEX = 
-		    Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
-	        Optional<User> usercopy = userservice.findByEmail(email);
-    
+	 final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+      Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
+      
+       String Nameregex = "^[a-zA-Z ]+$";
+       Pattern pattern = Pattern.compile(Nameregex);
+       Matcher NameMatcher = pattern.matcher(name); 
+      
+	  Optional<User> usercopy = userservice.findByEmail(email);
+     
 	        
      if (email==null|| !matcher.find())
 	{
@@ -59,7 +63,7 @@ ErrorMessage create(@RequestParam(Constants.Email) String email,@RequestParam(Co
 	{	
 		throw new ValidationException("invalid password");	
 	}
-	else if(name==null || name.length()<3 )
+	else if(name==null || name.length()<3 || !NameMatcher.find())
 	{	
 		throw new ValidationException("invalid name");	
 	}
