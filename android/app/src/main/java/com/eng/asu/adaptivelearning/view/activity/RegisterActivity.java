@@ -64,6 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         else{
             //TODO - Register users in the server
             //save name.getText().toString()),email.getText().toString()),password.getText().toString()),user_type
+            userViewModel.Register(name.getText().toString(),email.getText().toString(),password.getText().toString(),user_type, RegisterActivity.this);
         }
     }
 }
