@@ -18,7 +18,6 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
 
     private Context context;
     private List<Course> courses;
-    private CoursesListItemBinding listBinding;
 
     public CoursesAdapter(Context context, List<Course> courses) {
         this.context = context;
@@ -28,7 +27,7 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
     @NonNull
     @Override
     public CoursesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        listBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.courses_list_item, parent, false);
+        CoursesListItemBinding listBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.courses_list_item, parent, false);
         return new CoursesViewHolder(listBinding);
     }
 
