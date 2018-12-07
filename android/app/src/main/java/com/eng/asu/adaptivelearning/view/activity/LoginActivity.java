@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.eng.asu.adaptivelearning.EditTextWatcher;
 import com.eng.asu.adaptivelearning.R;
 import com.eng.asu.adaptivelearning.databinding.ActivityLoginBinding;
+import com.eng.asu.adaptivelearning.model.User;
 import com.eng.asu.adaptivelearning.viewmodel.UserViewModel;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -13,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
+import io.reactivex.observers.DefaultObserver;
 
 public class LoginActivity extends AppCompatActivity {
     UserViewModel userViewModel;
@@ -40,9 +42,25 @@ public class LoginActivity extends AppCompatActivity {
         else if (!userViewModel.isValidPassword(password))
             invalidInput(loginBinding.passwordEditText, "Password is invalid");
         else {
-            userViewModel.login(email,password);
-            finish();
-            startActivity(new Intent(this, MainActivity.class));
+            userViewModel.login(email, password).subscribe(new DefaultObserver<User>() {
+                @Override
+                public void onNext(User user) {
+                    if (userViewModel.isUserLoggedIn()) {
+                        finish();
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+
+                }
+
+                @Override
+                public void onComplete() {
+
+                }
+            });
         }
     }
 

@@ -1,8 +1,10 @@
 package com.eng.asu.adaptivelearning.view.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import com.eng.asu.adaptivelearning.R;
@@ -30,12 +32,14 @@ public class MainActivity extends AppCompatActivity {
         initializeActivity();
     }
 
+    @SuppressLint("RestrictedApi")
     private void initializeActivity() {
-//        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
-//        dividerItemDecoration.setDrawable(this.getResources().getDrawable(R.drawable.divider));
-//        mainBinding.coursesList.addItemDecoration(dividerItemDecoration);
+        if (userViewModel.allowCourseCreation())
+            mainBinding.createClass.setVisibility(View.VISIBLE);
+        else
+            mainBinding.createClass.setVisibility(View.GONE);
         mainBinding.coursesList.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        mainBinding.coursesList.setAdapter(new CoursesAdapter(this, userViewModel.getCourses()));
+        mainBinding.coursesList.setAdapter(new CoursesAdapter(this, userViewModel.getCourses(),userViewModel.allowEnrollment()));
     }
 
     private void createWelcomeToast() {
