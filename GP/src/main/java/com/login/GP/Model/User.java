@@ -43,7 +43,10 @@ public class User {
     @Size(max = 100)
     private String password;
     
-    
+//    @OneToMany(fetch = FetchType.LAZY,
+//            mappedBy = "creator")
+//    private Set<ClassRoom> Classrooms;
+
    
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -145,4 +148,12 @@ public class User {
     public void setJoins(Set<ClassRoom> joins) {
         this.joins = joins;
     }
+
+//    public Set<ClassRoom> getClassrooms() {
+//        return Classrooms;
+//    }
+//
+//    public void setClassrooms(Set<ClassRoom> classrooms) {
+//        Classrooms = classrooms;
+//    }
 }

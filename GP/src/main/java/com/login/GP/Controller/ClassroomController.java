@@ -28,10 +28,11 @@ public class ClassRoomController {
 
     @PostMapping("/classrooms")
     ResponseEntity<ClassRoom> create(@Valid @RequestBody ClassRoom classroom){
-        if (classroom.getCreator().getType()==1)
-            return new ResponseEntity(classRoomService.save(classroom),HttpStatus.OK);
-        else
-            return new ResponseEntity(classroom,HttpStatus.FORBIDDEN);
+//        if (classroom.getCreator().getType()==1)
+//            return new ResponseEntity(classRoomService.save(classroom),HttpStatus.OK);
+//        else
+//            return new ResponseEntity(classroom,HttpStatus.FORBIDDEN);
+        return new ResponseEntity(classRoomService.save(classroom),HttpStatus.OK);
     }
 
 

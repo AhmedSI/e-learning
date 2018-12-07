@@ -17,11 +17,14 @@ public class ClassRoom {
     @GeneratedValue (strategy = GenerationType.AUTO)
     private int classId;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinTable(name = "teacher_classrooms",
+//            joinColumns = @JoinColumn(name = "classroom_id"),
+//            inverseJoinColumns = @JoinColumn(name = "teacher_id"))
+//    @OnDelete(action = OnDeleteAction.CASCADE)
+//    private User creator;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "User_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private User creator;
+    private int creatorId;
 
     @NotNull
     private int classType;
@@ -48,12 +51,16 @@ public class ClassRoom {
             inverseJoinColumns = {@JoinColumn(name = "parent_id")})
     private Set<User> parents = new HashSet<>();
 
+    public ClassRoom() {
+    }
 
-    public ClassRoom(@NotNull User creator, int classType, @NotBlank @Size(max = 255) String category, @NotBlank @Size(max = 255) String passCode) {
-        this.creator = creator;
+    public ClassRoom(@NotNull int creatorId, @NotNull int classType, @NotBlank @Size(max = 255) String category, @NotBlank @Size(max = 255) String passCode, Set<User> students, Set<User> parents) {
+        this.creatorId = creatorId;
         this.classType = classType;
         this.category = category;
         this.passCode = passCode;
+        this.students = students;
+        this.parents = parents;
     }
 
     public int getClassId() {
@@ -64,12 +71,12 @@ public class ClassRoom {
         this.classId = classId;
     }
 
-    public User getCreator() {
-        return creator;
+    public int getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setCreatorId(int creatorId) {
+        this.creatorId = creatorId;
     }
 
     public int getClassType() {
