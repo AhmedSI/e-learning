@@ -11,6 +11,5 @@ public interface Api {
             @Field("name") String name,
             @Field("email") String email,
             @Field("password") String password,
-            @Field("type") String type
-    );
+            @Field("type") String type);
 }
