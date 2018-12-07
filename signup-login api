@@ -1,27 +1,5 @@
-Login
-@Get request
-path :localhot:8080/api/auth/signin?email=email@something.com&password=12345
+##Login example
+http://localhost:8080/api/auth/login?email=muhammed@gmail.com&password=12345678
 
-return code 200 if success along with the following JSON and error code for wrong email or password
-{
-  "token":asdofjosadiphsfjadl;fa
-  ,"user":
-      {
-        "name":muhammed,
-        "password":asdfsafa!34321%^8*&,
-        "type":1
-        "email":email@email.com
-      }
-}
-
-Sign up
-@Post
-path localhot:8080/api/auth/signup?name=muhammed&email=something@something.com
-
-return opcode 200 if sucess or other codes for different parameters validation (300 for example if mail exists)
-and any body message you want
-
-notes :
--paths can be edited if wanted 
--valditions handled 
--encryption handeled
+##Register example
+http://localhost:8080/api/auth/register?email=muhammed@gmail.com&password=12345678&name=%22muhammed%22&type=1
