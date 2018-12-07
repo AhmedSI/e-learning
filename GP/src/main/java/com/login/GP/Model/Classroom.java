@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -42,19 +43,19 @@ public class ClassRoom {
     @JoinTable(name = "student_classrooms",
             joinColumns = {@JoinColumn(name = "classroom_id")},
             inverseJoinColumns = {@JoinColumn(name = "student_id")})
-    private Set<User> students = new HashSet<>();
+    private List<User> students;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "parent_classrooms",
             joinColumns = {@JoinColumn(name = "classroom_id")},
             inverseJoinColumns = {@JoinColumn(name = "parent_id")})
-    private Set<User> parents = new HashSet<>();
+    private List<User> parents;
 
     public ClassRoom() {
     }
 
-    public ClassRoom(@NotNull int creatorId, @NotNull int classType, @NotBlank @Size(max = 255) String category, @NotBlank @Size(max = 255) String passCode, Set<User> students, Set<User> parents) {
+    public ClassRoom(@NotNull int creatorId, @NotNull int classType, @NotBlank @Size(max = 255) String category, @NotBlank @Size(max = 255) String passCode, List<User> students, List<User> parents) {
         this.creatorId = creatorId;
         this.classType = classType;
         this.category = category;
@@ -103,19 +104,19 @@ public class ClassRoom {
         this.passCode = passCode;
     }
 
-    public Set<User> getStudents() {
+    public List<User> getStudents() {
         return students;
     }
 
-    public void setStudents(Set<User> students) {
+    public void setStudents(List<User> students) {
         this.students = students;
     }
 
-    public Set<User> getParents() {
+    public List<User> getParents() {
         return parents;
     }
 
-    public void setParents(Set<User> parents) {
+    public void setParents(List<User> parents) {
         this.parents = parents;
     }
 }

@@ -58,12 +58,12 @@ public class User {
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "students")
-    private Set<ClassRoom> enrolls = new HashSet<>();
+    private List<ClassRoom> enrolls;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "parents")
-    private Set<ClassRoom> joins = new HashSet<>();
+    private List<ClassRoom> joins;
 
     public User() {
 
@@ -133,19 +133,19 @@ public class User {
         this.roles = roles;
     }
 
-    public Set<ClassRoom> getEnrolls() {
+    public List<ClassRoom> getEnrolls() {
         return enrolls;
     }
 
-    public void setEnrolls(Set<ClassRoom> enrolls) {
+    public void setEnrolls(List<ClassRoom> enrolls) {
         this.enrolls = enrolls;
     }
 
-    public Set<ClassRoom> getJoins() {
+    public List<ClassRoom> getJoins() {
         return joins;
     }
 
-    public void setJoins(Set<ClassRoom> joins) {
+    public void setJoins(List<ClassRoom> joins) {
         this.joins = joins;
     }
 
