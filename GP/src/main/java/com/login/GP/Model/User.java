@@ -52,6 +52,16 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            mappedBy = "students")
+    private Set<ClassRoom> enrolls = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            mappedBy = "parents")
+    private Set<ClassRoom> joins = new HashSet<>();
+
     public User() {
 
     }
@@ -118,5 +128,21 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Set<ClassRoom> getEnrolls() {
+        return enrolls;
+    }
+
+    public void setEnrolls(Set<ClassRoom> enrolls) {
+        this.enrolls = enrolls;
+    }
+
+    public Set<ClassRoom> getJoins() {
+        return joins;
+    }
+
+    public void setJoins(Set<ClassRoom> joins) {
+        this.joins = joins;
     }
 }

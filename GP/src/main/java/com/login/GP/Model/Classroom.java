@@ -1,9 +1,14 @@
 package com.login.GP.Model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "classroom")
@@ -13,8 +18,12 @@ public class ClassRoom {
     private int classId;
 
     @NotNull
-    private int creatorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "User_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private User creator;
 
+    @NotNull
     private int classType;
 
     @NotBlank
@@ -25,9 +34,23 @@ public class ClassRoom {
     @Size (max = 255)
     private String passCode;
 
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "student_classrooms",
+            joinColumns = {@JoinColumn(name = "classroom_id")},
+            inverseJoinColumns = {@JoinColumn(name = "student_id")})
+    private Set<User> students = new HashSet<>();
 
-    public ClassRoom(@NotNull int creatorId, int classType, @NotBlank @Size(max = 255) String category, @NotBlank @Size(max = 255) String passCode) {
-        this.creatorId = creatorId;
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "parent_classrooms",
+            joinColumns = {@JoinColumn(name = "classroom_id")},
+            inverseJoinColumns = {@JoinColumn(name = "parent_id")})
+    private Set<User> parents = new HashSet<>();
+
+
+    public ClassRoom(@NotNull User creator, int classType, @NotBlank @Size(max = 255) String category, @NotBlank @Size(max = 255) String passCode) {
+        this.creator = creator;
         this.classType = classType;
         this.category = category;
         this.passCode = passCode;
@@ -41,12 +64,12 @@ public class ClassRoom {
         this.classId = classId;
     }
 
-    public int getCreatorId() {
-        return creatorId;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setCreatorId(int creatorId) {
-        this.creatorId = creatorId;
+    public void setCreator(User creator) {
+        this.creator = creator;
     }
 
     public int getClassType() {
@@ -71,5 +94,21 @@ public class ClassRoom {
 
     public void setPassCode(String passCode) {
         this.passCode = passCode;
+    }
+
+    public Set<User> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<User> students) {
+        this.students = students;
+    }
+
+    public Set<User> getParents() {
+        return parents;
+    }
+
+    public void setParents(Set<User> parents) {
+        this.parents = parents;
     }
 }
