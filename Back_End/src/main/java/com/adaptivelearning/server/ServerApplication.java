@@ -1,6 +1,5 @@
 package com.adaptivelearning.server;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
@@ -9,19 +8,14 @@ import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 
+import static org.springframework.boot.SpringApplication.run;
+
+@EntityScan(basePackageClasses = {ServerApplication.class, Jsr310JpaConverters.class})
 @SpringBootApplication
-
-@EntityScan(basePackageClasses = {
-        GpApplication.class,
-        Jsr310JpaConverters.class
-})
-
-
-public class GpApplication {
-
+public class ServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(GpApplication.class, args);
+        run(ServerApplication.class, args);
     }
 
     @PostConstruct

@@ -2,6 +2,16 @@ package com.adaptivelearning.server.Model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,12 +23,6 @@ public class ClassRoom {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int classId;
 
-    //    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinTable(name = "teacher_classrooms",
-//            joinColumns = @JoinColumn(name = "classroom_id"),
-//            inverseJoinColumns = @JoinColumn(name = "teacher_id"))
-//    @OnDelete(action = OnDeleteAction.CASCADE)
-//    private User creator;
     @NotNull
     private int creatorId;
 

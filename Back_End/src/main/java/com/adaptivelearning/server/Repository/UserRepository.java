@@ -5,22 +5,9 @@ import com.adaptivelearning.server.Model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
-
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
-
-    Optional<User> findByUsernameOrEmail(String username, String email);
-
-    List<User> findByIdIn(List<Long> userIds);
-
-    Optional<User> findByUsername(String username);
-
-    Optional<User> findByType(int type);
-
-    Boolean existsByUsername(String username);
+    User findByEmail(String email);
 
     Boolean existsByEmail(String email);
 }

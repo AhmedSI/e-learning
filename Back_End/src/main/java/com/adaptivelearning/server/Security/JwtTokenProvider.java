@@ -8,6 +8,15 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+
+import static io.jsonwebtoken.SignatureAlgorithm.HS512;
+
 @Component
 public class JwtTokenProvider {
 
@@ -30,7 +39,7 @@ public class JwtTokenProvider {
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(HS512, jwtSecret)
                 .compact();
     }
 
