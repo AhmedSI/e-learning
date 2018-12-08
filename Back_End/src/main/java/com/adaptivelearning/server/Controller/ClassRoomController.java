@@ -31,36 +31,31 @@ public class ClassRoomController {
     UserRepository userRepository;
 
     @PostMapping("/classrooms")
-    ResponseEntity<ClassRoom> create(@Valid @RequestBody ClassRoom classroom) {
-        return new ResponseEntity(classRoomService.save(classroom), HttpStatus.OK);
+    ResponseEntity<ClassRoom> create(@Valid @RequestBody ClassRoom classroom){
+        return new ResponseEntity(classRoomService.save(classroom),HttpStatus.OK);
     }
-
-
+    @PutMapping("/classrooms")
+    ResponseEntity<ClassRoom> update(@RequestBody ClassRoom classRoom){
+        if(classRoomService.findById(classRoom.getClassId()).isPresent())
+            return new ResponseEntity(classRoomService.save(classRoom), HttpStatus.OK);
+        else
+            return new ResponseEntity(classRoom,HttpStatus.BAD_REQUEST);
+    }
     @GetMapping("/classrooms")
-    Iterable<ClassRoom> read() {
+    Iterable<ClassRoom> read(){
         return classRoomService.findAll();
     }
 
-    @PutMapping("/classrooms")
-    ResponseEntity<ClassRoom> update(@RequestBody ClassRoom classRoom) {
-        if (classRoomService.findById(classRoom.getClassId()).isPresent())
-            return new ResponseEntity(classRoomService.save(classRoom), HttpStatus.OK);
-        else
-            return new ResponseEntity(classRoom, HttpStatus.BAD_REQUEST);
-    }
-
     @DeleteMapping("/classrooms/{id}")
-    void delete(@PathVariable Integer id) {
+    void delete(@PathVariable Integer id){
         classRoomService.deleteById(id);
     }
-
     @GetMapping("/classrooms/{id}")
-    Optional<ClassRoom> findById(@PathVariable Integer id) {
+    Optional<ClassRoom> findById(@PathVariable Integer id){
         return classRoomService.findById(id);
     }
-
-    @GetMapping("/classrooms/creator")
-    Iterable<ClassRoom> findByQuery(@RequestParam("creator") Integer id) {
+    @GetMapping("/classrooms/creator/{id}")
+    Iterable<ClassRoom> findByQueryCreator(@PathVariable Integer id){
         return classRoomService.findByCreatorId(id);
     }
 }
