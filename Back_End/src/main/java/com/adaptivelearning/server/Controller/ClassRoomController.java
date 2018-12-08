@@ -4,9 +4,11 @@ import com.adaptivelearning.server.Model.ClassRoom;
 import com.adaptivelearning.server.Repository.ClassRoomRepository;
 import com.adaptivelearning.server.Repository.UserRepository;
 
+import com.adaptivelearning.server.Security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,8 +56,17 @@ public class ClassRoomController {
     Optional<ClassRoom> findById(@PathVariable Integer id){
         return classRoomService.findById(id);
     }
-    @GetMapping("/classrooms/creator/{id}")
-    Iterable<ClassRoom> findByQueryCreator(@PathVariable Integer id){
-        return classRoomService.findByCreatorId(id);
+    @GetMapping("/classrooms/retrive/{id}")
+    Iterable<ClassRoom> findByQuery(@PathVariable Integer id) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_email = ((UserPrincipal) principal).getEmail();
+        if (userRepository.findByEmail(user_email).getType() == 1) {
+            return classRoomService.findByCreatorId(id);
+        }
+        else
+            {
+            return null;//will be fixed
+            }
+
     }
 }
