@@ -1,7 +1,9 @@
 package com.adaptivelearning.server.Controller;
 
-	import com.adaptivelearning.server.Model.Parent_Children_Relation;
+	import com.adaptivelearning.server.Model.Child_joins;
+import com.adaptivelearning.server.Model.Parent_Children_Relation;
 import com.adaptivelearning.server.Model.User;
+import com.adaptivelearning.server.Repository.ParentEnrollChlidRepository;
 import com.adaptivelearning.server.Repository.Parent_Children_Relation_Repository;
 import com.adaptivelearning.server.Repository.RoleRepository;
 	import com.adaptivelearning.server.Repository.UserRepository;
@@ -13,12 +15,16 @@ import com.adaptivelearning.server.Repository.RoleRepository;
 	import org.springframework.http.HttpStatus;
 	import org.springframework.http.ResponseEntity;
 	import org.springframework.security.authentication.AuthenticationManager;
-	import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 	import org.springframework.web.bind.annotation.PostMapping;
 	import org.springframework.web.bind.annotation.RequestMapping;
 	import org.springframework.web.bind.annotation.RequestParam;
 	import org.springframework.web.bind.annotation.RestController;
-	import javax.validation.Valid;
+
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 	@RestController
 	@RequestMapping(Mapping.BASE_AUTH)
@@ -73,4 +79,26 @@ public class ParentController {
 
 	        return ResponseEntity.ok().body(new ApiResponse(200, "Child is Added successfully"));
 	    }
+	    
+	    @Autowired
+	    ParentEnrollChlidRepository enrollchild;
+
+	    @PostMapping(Mapping.PARENTENROLL)
+	    ResponseEntity<?> enroll(@Valid @RequestParam(Param.PARENT_ID) int parentId,@Valid @RequestParam(Param.ChildId) int childId,@Valid @RequestParam(Param.CLASSROOM_ID) int classId) {
+	    	Optional<User>  enrollChild =  userRepository.findById((long) childId);
+	    	
+	    	if(enrollChild.get().getType()!= 4)
+	    	{
+	    		  return new ResponseEntity(new ApiResponse(400, "InValid User Type For Enrollment"),
+		                    HttpStatus.BAD_REQUEST);
+		      
+	    	}
+	    	else {
+	    	Child_joins child=new Child_joins(parentId, childId, classId);
+	        enrollchild.save(child);
+	        return ResponseEntity.ok().body(new ApiResponse(200, "child enrolled to the classroom successfully"));
+	    	}
+	    }
+	    	
+	    
 	}
