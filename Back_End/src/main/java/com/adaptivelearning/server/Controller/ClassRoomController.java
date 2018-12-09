@@ -12,15 +12,16 @@ import com.adaptivelearning.server.payload.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -45,43 +46,93 @@ public class ClassRoomController {
             ClassRoom classRoom = new ClassRoom(classtype, category, passcode);
             classRoom.setCreator(userRepository.findByEmail(user_email));
 //            classRoom.setPassCode(PasswordEncoder.encode(classRoom.getPassCode()));
-            return new ResponseEntity(classRoomRepository.save(classRoom), HttpStatus.OK);
+            classRoomRepository.save(classRoom);
+            return new ResponseEntity(new ApiResponse(200, " Classroom has been created"),
+                    HttpStatus.OK);
         } else
             return new ResponseEntity(new ApiResponse(405, "type not allowed. Only a teacher could create a classroom"),
                     HttpStatus.FORBIDDEN);
     }
 
-//    @PostMapping("/classrooms")
-//    ResponseEntity<ClassRoom> create(@Valid @RequestBody ClassRoom classroom) {
-//        return new ResponseEntity(classRoomRepository.save(classroom), HttpStatus.OK);
-//    }
-
-
-    @GetMapping("/classrooms")
+    @GetMapping(Mapping.CLASSROOMS)
     Iterable<ClassRoom> read() {
-        return classRoomRepository.findAll();
+        Object principal =  (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        String user_email = ((UserPrincipal) principal).getEmail();
+        User user = userRepository.findByEmail(user_email);
+        if(user.getType()==1){
+            return user.getClassrooms();
+        }
+        else if(user.getType()==2) {
+            return user.getEnrolls();
+        }
+        //// i'm sorry i'm tired of thinking so please someone do this retrieve you have to retrieve classrooms of children of this guy, enjoy!
+//        else if (user.getType()==3){
+////            return new ResponseEntity.(new ApiResponse(400, "user cannot enroll now"),
+////                    HttpStatus.BAD_REQUEST);
+//            return classRoomRepository.
+//        }
+        else if (user.getType()==4){
+            return user.getJoins();
+        }
+        else {
+            return new ArrayList<ClassRoom>();
+        }
+
     }
 
-    @PutMapping("/classrooms")
-    ResponseEntity<ClassRoom> update(@RequestBody ClassRoom classRoom) {
-        if (classRoomRepository.findById(classRoom.getClassId()).isPresent())
-            return new ResponseEntity(classRoomRepository.save(classRoom), HttpStatus.OK);
-        else
-            return new ResponseEntity(classRoom, HttpStatus.BAD_REQUEST);
+
+    @PutMapping(Mapping.CLASSROOMS)
+    ResponseEntity<?> update(@Valid @RequestParam(Param.CATEGORY) String category,
+                             @Valid @RequestParam(Param.CLASSTYPE) Integer classtype,
+                             @Valid @RequestParam(Param.PASSCODE) String passcode,
+                             @Valid @RequestParam(Param.CLASSROOM_ID) Integer classRoomId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_email = ((UserPrincipal) principal).getEmail();
+        User user = userRepository.findByEmail(user_email);
+
+        if (classRoomRepository.findById(classRoomId).isPresent()&&
+                classRoomRepository.findById(classRoomId).get().getCreator().getId()==user.getId()){
+            ClassRoom classRoom = classRoomRepository.findById(classRoomId).get();
+            classRoom.setPassCode(passcode);
+            classRoom.setCategory(category);
+            classRoom.setClassType(classtype);
+            return new ResponseEntity(new ApiResponse(200, " Classroom has been updated"),
+                    HttpStatus.OK);
+        }
+        else if(classRoomRepository.findById(classRoomId).isPresent()&&
+                classRoomRepository.findById(classRoomId).get().getCreator().getId()!=user.getId()){
+            return new ResponseEntity(new ApiResponse(405, " Not allowed! Only The teacher who has create this classroom could update"),
+                    HttpStatus.FORBIDDEN);
+        }
+        else {
+            return new ResponseEntity(new ApiResponse(404, " Classroom is not existed"),
+                    HttpStatus.NOT_FOUND);
+        }
     }
 
-    @DeleteMapping("/classrooms/{id}")
-    void delete(@PathVariable Integer id) {
-        classRoomRepository.deleteById(id);
+    @DeleteMapping(Mapping.CLASSROOMS)
+    ResponseEntity<?> delete(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classRoomId) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_email = ((UserPrincipal) principal).getEmail();
+        User user = userRepository.findByEmail(user_email);
+        if (classRoomRepository.findById(classRoomId).isPresent() == false){
+            return new ResponseEntity(new ApiResponse(404,"Classroom doesn't exist!"),
+                    HttpStatus.NOT_FOUND);
+        }
+        else if (user.getType()==1 &&
+                classRoomRepository.findById(classRoomId).get().getCreator().getId()==user.getId()){
+            classRoomRepository.deleteById(classRoomId);
+            return new ResponseEntity(new ApiResponse(200,"Classroom has been deleted successfully"),
+                    HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity(new ApiResponse(405,"You Are not allowed to delete this classroom!"),
+                    HttpStatus.FORBIDDEN);
+        }
     }
 
-    @GetMapping("/classrooms/{id}")
-    Optional<ClassRoom> findById(@PathVariable Integer id) {
-        return classRoomRepository.findById(id);
-    }
-
-    @GetMapping("/classrooms/creator")
-    Iterable<ClassRoom> findByQuery(@RequestParam("creator") Integer id) {
-        return classRoomRepository.findByCreatorId(id);
+    @GetMapping(Mapping.CLASSROOMS)
+    Optional<ClassRoom> findById(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classroomId) {
+        return classRoomRepository.findById(classroomId);
     }
 }

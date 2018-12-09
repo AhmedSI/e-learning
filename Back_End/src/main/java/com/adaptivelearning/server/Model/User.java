@@ -1,8 +1,11 @@
 package com.adaptivelearning.server.Model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.hibernate.annotations.NaturalId;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +39,9 @@ public class User {
     @Size(max = 100)
     private String password;
 
-    @OneToMany(mappedBy = "creator")
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "creator")
     private List<ClassRoom> classrooms;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -45,16 +50,26 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "students")
     private List<ClassRoom> enrolls;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            mappedBy = "parents")
+            mappedBy = "childs")
     private List<ClassRoom> joins;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "parent")
+    private List<User> children;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent")
+    private User parent;
 
     @Ignore
     private String token;
@@ -149,5 +164,21 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public List<User> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<User> children) {
+        this.children = children;
+    }
+
+    public User getParent() {
+        return parent;
+    }
+
+    public void setParent(User parent) {
+        this.parent = parent;
     }
 }

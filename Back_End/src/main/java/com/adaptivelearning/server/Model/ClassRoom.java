@@ -1,8 +1,11 @@
 package com.adaptivelearning.server.Model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
@@ -20,7 +23,8 @@ public class ClassRoom {
 //    @NotNull
 //    private int creatorId;
 
-    @ManyToOne
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    @ManyToOne(fetch = FetchType.EAGER)
 //    @JoinTable(name = "teacher_classrooms",
 //            joinColumns = @JoinColumn(name = "classroom_id"),
 //            inverseJoinColumns = @JoinColumn(name = "teacher_id"))
@@ -39,6 +43,7 @@ public class ClassRoom {
     @Size(max = 255)
     private String passCode;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "student_classrooms",
@@ -46,12 +51,13 @@ public class ClassRoom {
             inverseJoinColumns = {@JoinColumn(name = "student_id")})
     private List<User> students;
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "parent_classrooms",
+    @JoinTable(name = "childs_classrooms",
             joinColumns = {@JoinColumn(name = "classroom_id")},
-            inverseJoinColumns = {@JoinColumn(name = "parent_id")})
-    private List<User> parents;
+            inverseJoinColumns = {@JoinColumn(name = "child_id")})
+    private List<User> childs;
 
     public ClassRoom() {
     }
@@ -112,11 +118,11 @@ public class ClassRoom {
         this.students = students;
     }
 
-    public List<User> getParents() {
-        return parents;
+    public List<User> getChilds() {
+        return childs;
     }
 
-    public void setParents(List<User> parents) {
-        this.parents = parents;
+    public void setChilds(List<User> childs) {
+        this.childs = childs;
     }
 }
