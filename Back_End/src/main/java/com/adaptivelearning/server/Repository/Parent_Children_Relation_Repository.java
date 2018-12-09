@@ -8,6 +8,7 @@ import com.adaptivelearning.server.Model.Parent_Children_Relation;
 @Repository
 public interface Parent_Children_Relation_Repository  extends JpaRepository <Parent_Children_Relation, Long> {
 	//User findByEmail(String email);
-
+  
     //Boolean existsByEmail(String email);
+	
 }
