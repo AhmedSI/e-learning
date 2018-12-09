@@ -80,6 +80,13 @@ public class UserViewModel extends AndroidViewModel {
 
         return courses;
     }
+    public List<Course> getCourses2() {
+        List<Course> courses = new ArrayList<>();
+        for (int i = 1; i <= 10; i++)
+            courses.add(new Course("Course " + i, new User(i, "", "", TEACHER, ""), getRandomBackground()));
+
+        return courses;
+    }
 
     private int getRandomBackground() {
         List<Integer> backgrounds = new ArrayList<>(3);
