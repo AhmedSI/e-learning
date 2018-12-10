@@ -47,9 +47,7 @@ public class UserController {
     JwtTokenProvider tokenProvider;
 
     @GetMapping(Mapping.LOGIN)
-
-    public LoginResponse authenticateUser(@Valid @RequestParam(Param.EMAIL) String email,
-
+    public User authenticateUser(@Valid @RequestParam(Param.EMAIL) String email,
                                           @Valid @RequestParam(Param.PASSWORD) String password) {
         User user = userRepository.findByEmail(email);
 
@@ -68,25 +66,22 @@ public class UserController {
 
         String jwt = tokenProvider.generateToken(authentication);
 
+        user.setToken(jwt);
 
-        return new LoginResponse(200, jwt, user);
-
+        return user;
     }
 
     @SuppressWarnings("unchecked")
     @PostMapping(Mapping.REGISTER)
-    public ResponseEntity<?> registerUser(@Valid @RequestParam(Param.EMAIL) String email,
+    public void registerUser(@Valid @RequestParam(Param.EMAIL) String email,
                                           @Valid @RequestParam(Param.NAME) String name,
                                           @Valid @RequestParam(Param.PASSWORD) String password,
                                           @Valid @RequestParam(Param.TYPE) int type) {
-        if (userRepository.existsByEmail(email)) {
-            return new ResponseEntity(new ApiResponse(400, "Email Address already in use!"),
-                    HttpStatus.BAD_REQUEST);
-        }
-        if (type < 1 || type > 4) {
-            return new ResponseEntity(new ApiResponse(500, "type not allowed it must be between 1 & 4"),
-                    HttpStatus.BAD_REQUEST);
-        }
+        if (userRepository.existsByEmail(email))
+            throw new RestClientResponseException("Email is used", 300, "Unregistered", HttpHeaders.EMPTY, null, null);
+
+        if (type < 1 || type > 3)
+            throw new RestClientResponseException("type not allowed", 500, "NotAllowed", HttpHeaders.EMPTY, null, null);
 
         // Creating user's account
         User user = new User(name, email, password, type);
@@ -95,6 +90,6 @@ public class UserController {
 
         userRepository.save(user);
 
-        return ResponseEntity.ok().body(new ApiResponse(200, "User registered successfully"));
+//        return ResponseEntity.ok().body(new ApiResponse(200, "User registered successfully"));
     }
 }

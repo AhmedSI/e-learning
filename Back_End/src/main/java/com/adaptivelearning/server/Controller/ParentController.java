@@ -9,10 +9,10 @@ import com.adaptivelearning.server.Security.JwtTokenProvider;
 import com.adaptivelearning.server.Security.UserPrincipal;
 import com.adaptivelearning.server.constants.Mapping;
 import com.adaptivelearning.server.constants.Param;
-import com.adaptivelearning.server.payload.ApiResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 @RestController
-//@RequestMapping(Mapping.BASE_AUTH)
+@RequestMapping(Mapping.BASE_AUTH)
 public class ParentController {
 
     @Autowired
@@ -50,22 +51,15 @@ public class ParentController {
 
     @SuppressWarnings("unchecked")
     @PostMapping(Mapping.AddChild)
-    public ResponseEntity<?> addChild(@Valid @RequestParam(Param.EMAIL) String email,
+    public void addChild(@Valid @RequestParam(Param.EMAIL) String email,
                                       @Valid @RequestParam(Param.NAME) String name,
                                       @Valid @RequestParam(Param.PASSWORD) String password) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_email = ((UserPrincipal) principal).getEmail();
         User parent = userRepository.findByEmail(user_email);
 
-        if (userRepository.existsByEmail(email)) {
-            return new ResponseEntity(new ApiResponse(400, "Email Address already in use!"),
-                    HttpStatus.BAD_REQUEST);
-        }
-        //// not necessary
-//        if (type != 4) {
-//            return new ResponseEntity(new ApiResponse(500, "InValid User Type"),
-//                    HttpStatus.BAD_REQUEST);
-//        }
+        if (userRepository.existsByEmail(email))
+            throw new RestClientResponseException("User present", 400, "Badrequest", HttpHeaders.EMPTY, null, null);
 
         // Creating Child account
         User child = new User(name, email, password,4);
@@ -75,45 +69,44 @@ public class ParentController {
 
         parent.getChildren().add(child);
         userRepository.save(child);
-
-//        Added_Child = userRepository.findByEmail(email);// search for added child to get id
-//
-//        Parent_Children_Relation Parent_Child = new Parent_Children_Relation(Added_Child.getId() , Parent_id);
-//
-//        parent_children_relation_repository.save(Parent_Child);
-
-        return ResponseEntity.ok().body(new ApiResponse(200, "Child is Added successfully"));
     }
 
 
     @PostMapping(Mapping.PARENTENROLL)
-    ResponseEntity<?> enroll(@Valid @RequestParam(Param.USER_ID) int childId,
-                             @Valid @RequestParam(Param.CLASSROOM_ID) int classId) {
-        Optional<User>  enrollChild =  userRepository.findById((long) childId);
-        Optional<ClassRoom> classRoomSearch = classRoomRepository.findById(classId);
-        if (enrollChild.isPresent()&&classRoomSearch.isPresent()){
-            ClassRoom classRoom = classRoomSearch.get();
-            if(enrollChild.get().getType()!= 4)
-            {
-                return new ResponseEntity(new ApiResponse(400, "InValid User Type For Enrollment"),
-                        HttpStatus.BAD_REQUEST);
+     public void enroll(@Valid @RequestParam(Param.USER_ID) long childId,
+                        @Valid @RequestParam(Param.CLASSROOM_ID) Integer classId,
+                        @Valid @RequestParam(Param.PASSCODE) String passCode) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String user_email = ((UserPrincipal) principal).getEmail();
+        User parent = userRepository.findByEmail(user_email);
 
-            }
-            else {
-//                Child_joins child=new Child_joins(parentId, childId, classId);
-//                enrollchild.save(child);
-                classRoom.getChilds().add(enrollChild.get());
-                classRoomRepository.save(classRoom);
-                return ResponseEntity.ok().body(new ApiResponse(200, "child enrolled to the classroom successfully"));
-            }
-        }
-        else {
-            return new ResponseEntity(new ApiResponse(404, "Not found Child or classroom"),
-                    HttpStatus.NOT_FOUND);
-        }
+        Optional<User> enrollChild = userRepository.findById(childId);
+        Optional<ClassRoom> classRoomSearch = classRoomRepository.findById(classId);
+
+        if (parent.getType() != 3)
+            throw new RestClientResponseException("Not Allowed you are not a parent", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
+
+        if (!classRoomSearch.isPresent())
+            throw new RestClientResponseException("Classroom Not found", 404, "Notfound", HttpHeaders.EMPTY, null, null);
+
+
+        if (!enrollChild.isPresent())
+            throw new RestClientResponseException("Child not found", 400, "Badrequest", HttpHeaders.EMPTY, null, null);
+
+        if (enrollChild.get().getType() != 4)
+            throw new RestClientResponseException("this is not a child", 400, "Badrequest", HttpHeaders.EMPTY, null, null);
+
+        if (!enrollChild.get().getParent().getId().equals(parent.getId()))
+            throw new RestClientResponseException("Not Allowed you are not the parent of this child", 405, "Forbidden", HttpHeaders.EMPTY, null, null);
+
+        if(!classRoomSearch.get().getPassCode().equals(passCode))
+            throw new RestClientResponseException("Passcode is wrong", 403, "Forbidden", HttpHeaders.EMPTY, null, null);
+
+        ClassRoom classRoom = classRoomSearch.get();
+
+        classRoom.getChilds().add(enrollChild.get());
+        classRoomRepository.save(classRoom);
 
     }
 
-
 }
-

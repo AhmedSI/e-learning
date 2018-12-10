@@ -6,12 +6,14 @@ import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.hibernate.annotations.NaturalId;
 
 import java.util.ArrayList;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "client_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
@@ -37,7 +39,6 @@ public class User {
     @Size(max = 100)
     private String password;
 
-
     @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @OneToMany(fetch = FetchType.EAGER,
             mappedBy = "creator")
@@ -50,12 +51,10 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
-
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "students")
     private List<ClassRoom> enrolls;
-
 
     @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @ManyToMany(fetch = FetchType.LAZY,
@@ -74,7 +73,6 @@ public class User {
 
     @Ignore
     private String token;
-
 
     public User() {
 
@@ -151,7 +149,6 @@ public class User {
         this.joins = joins;
     }
 
-
     public List<ClassRoom> getClassrooms() {
         return classrooms;
     }
@@ -185,4 +182,3 @@ public class User {
         this.parent = parent;
     }
 }
-

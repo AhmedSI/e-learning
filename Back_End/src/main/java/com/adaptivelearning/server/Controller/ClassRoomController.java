@@ -8,21 +8,16 @@ import com.adaptivelearning.server.Repository.UserRepository;
 import com.adaptivelearning.server.Security.UserPrincipal;
 import com.adaptivelearning.server.constants.Mapping;
 import com.adaptivelearning.server.constants.Param;
-import com.adaptivelearning.server.payload.ApiResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientResponseException;
 
-import java.security.Principal;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.servlet.http.HttpServletRequest;
 
 import javax.validation.Valid;
 
@@ -36,24 +31,25 @@ public class ClassRoomController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @PostMapping(Mapping.CLASSROOMS)
-    ResponseEntity<ClassRoom> create(@Valid @RequestParam(Param.CATEGORY) String category,
-                                     @Valid @RequestParam(Param.CLASSTYPE) Integer classtype,
-                                     @Valid @RequestParam(Param.PASSCODE) String passcode) {
+    ClassRoom create(@Valid @RequestParam(Param.CATEGORY) String category,
+                     @Valid @RequestParam(Param.CLASSTYPE) Integer classtype,
+                     @Valid @RequestParam(Param.PASSCODE) String passcode) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_email = ((UserPrincipal) principal).getEmail();
 
-        if (userRepository.findByEmail(user_email).getType() == 1) {
-            ClassRoom classRoom = new ClassRoom(classtype, category, passcode);
-            classRoom.setCreator(userRepository.findByEmail(user_email));
-//            classRoom.setPassCode(PasswordEncoder.encode(classRoom.getPassCode()));
-            classRoomRepository.save(classRoom);
-            return new ResponseEntity(new ApiResponse(200, " Classroom has been created"),
-                    HttpStatus.OK);
-        } else
-            return new ResponseEntity(new ApiResponse(405, "type not allowed. Only a teacher could create a classroom"),
-                    HttpStatus.FORBIDDEN);
+        if (userRepository.findByEmail(user_email).getType() != 1)
+            throw new RestClientResponseException("User is not a teacher", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
+
+        ClassRoom classRoom = new ClassRoom(classtype, category, passcode);
+        classRoom.setCreator(userRepository.findByEmail(user_email));
+        classRoom.setPassCode(passwordEncoder.encode(classRoom.getPassCode()));
+        classRoomRepository.save(classRoom);
+
+        return classRoom;
     }
 
     @GetMapping(Mapping.CLASSROOMS)
@@ -84,7 +80,7 @@ public class ClassRoomController {
 
 
     @PutMapping(Mapping.CLASSROOMS)
-    ResponseEntity<?> update(@Valid @RequestParam(Param.CATEGORY) String category,
+    ClassRoom update(@Valid @RequestParam(Param.CATEGORY) String category,
                              @Valid @RequestParam(Param.CLASSTYPE) Integer classtype,
                              @Valid @RequestParam(Param.PASSCODE) String passcode,
                              @Valid @RequestParam(Param.CLASSROOM_ID) Integer classRoomId) {
@@ -92,50 +88,41 @@ public class ClassRoomController {
         String user_email = ((UserPrincipal) principal).getEmail();
         User user = userRepository.findByEmail(user_email);
 
-        if (classRoomRepository.findById(classRoomId).isPresent()&&
-                classRoomRepository.findById(classRoomId).get().getCreator().getId()==user.getId()){
-            ClassRoom classRoom = classRoomRepository.findById(classRoomId).get();
-            classRoom.setPassCode(passcode);
-            classRoom.setCategory(category);
-            classRoom.setClassType(classtype);
-            return new ResponseEntity(new ApiResponse(200, " Classroom has been updated"),
-                    HttpStatus.OK);
-        }
-        else if(classRoomRepository.findById(classRoomId).isPresent()&&
-                classRoomRepository.findById(classRoomId).get().getCreator().getId()!=user.getId()){
-            return new ResponseEntity(new ApiResponse(405, " Not allowed! Only The teacher who has create this classroom could update"),
-                    HttpStatus.FORBIDDEN);
-        }
-        else {
-            return new ResponseEntity(new ApiResponse(404, " Classroom is not existed"),
-                    HttpStatus.NOT_FOUND);
-        }
+        if (!classRoomRepository.findById(classRoomId).isPresent())
+            throw new RestClientResponseException("Not found classroom", 404, "NotFound", HttpHeaders.EMPTY, null, null);
+
+        if (!classRoomRepository.findById(classRoomId).get().getCreator().getId().equals(user.getId()))
+            throw new RestClientResponseException("Not Allowed you are not a teacher", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
+
+        ClassRoom classRoom = classRoomRepository.findById(classRoomId).get();
+        classRoom.setPassCode(passcode);
+        classRoom.setCategory(category);
+        classRoom.setClassType(classtype);
+        return classRoom;
     }
 
     @DeleteMapping(Mapping.CLASSROOMS)
-    ResponseEntity<?> delete(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classRoomId) {
+    void delete(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classRoomId) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String user_email = ((UserPrincipal) principal).getEmail();
         User user = userRepository.findByEmail(user_email);
-        if (classRoomRepository.findById(classRoomId).isPresent() == false){
-            return new ResponseEntity(new ApiResponse(404,"Classroom doesn't exist!"),
-                    HttpStatus.NOT_FOUND);
-        }
-        else if (user.getType()==1 &&
-                classRoomRepository.findById(classRoomId).get().getCreator().getId()==user.getId()){
-            classRoomRepository.deleteById(classRoomId);
-            return new ResponseEntity(new ApiResponse(200,"Classroom has been deleted successfully"),
-                    HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity(new ApiResponse(405,"You Are not allowed to delete this classroom!"),
-                    HttpStatus.FORBIDDEN);
-        }
+
+        if (!classRoomRepository.findById(classRoomId).isPresent())
+            throw new RestClientResponseException("Not found classroom", 404, "NotFound", HttpHeaders.EMPTY, null, null);
+
+        if(user.getType()!=1 ||
+                !classRoomRepository.findById(classRoomId).get().getCreator().getId().equals(user.getId()))
+            throw new RestClientResponseException("Only creator of this classroom is allowed", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
+
+        classRoomRepository.deleteById(classRoomId);
     }
 
-    @GetMapping(Mapping.CLASSROOMS)
-    Optional<ClassRoom> findById(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classroomId) {
-        return classRoomRepository.findById(classroomId);
+    @GetMapping(Mapping.CLASSROOM)
+    ClassRoom findById(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classRoomId) {
+        if(!classRoomRepository.findById(classRoomId).isPresent())
+            throw new RestClientResponseException("Not found classroom", 404, "NotFound", HttpHeaders.EMPTY, null, null);
 
+
+        return classRoomRepository.findById(classRoomId).get();
     }
 }
