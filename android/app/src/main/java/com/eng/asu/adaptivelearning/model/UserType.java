@@ -1,5 +1,8 @@
 package com.eng.asu.adaptivelearning.model;
 
-public enum UserType {
-    TEACHER, STUDENT, PARENT, CHILD
+public class UserType {
+    public static final int TEACHER = 1;
+    public static final int STUDENT = 2;
+    public static final int PARENT = 3;
+    public static final int CHILD = 4;
 }

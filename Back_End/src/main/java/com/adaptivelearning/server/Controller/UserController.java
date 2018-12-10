@@ -47,7 +47,9 @@ public class UserController {
     JwtTokenProvider tokenProvider;
 
     @GetMapping(Mapping.LOGIN)
-    public User authenticateUser(@Valid @RequestParam(Param.EMAIL) String email,
+
+    public LoginResponse authenticateUser(@Valid @RequestParam(Param.EMAIL) String email,
+
                                           @Valid @RequestParam(Param.PASSWORD) String password) {
         User user = userRepository.findByEmail(email);
 
@@ -66,9 +68,9 @@ public class UserController {
 
         String jwt = tokenProvider.generateToken(authentication);
 
-        user.setToken(jwt);
 
-        return user;
+        return new LoginResponse(200, jwt, user);
+
     }
 
     @SuppressWarnings("unchecked")

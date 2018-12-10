@@ -2,6 +2,7 @@ package com.eng.asu.adaptivelearning.view.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.eng.asu.adaptivelearning.R;
@@ -18,17 +19,18 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
 
     private Context context;
     private List<Course> courses;
-    private CoursesListItemBinding listBinding;
+    private boolean isEnrollmentAllowed;
 
-    public CoursesAdapter(Context context, List<Course> courses) {
+    public CoursesAdapter(Context context, List<Course> courses, boolean allowEnrollment) {
         this.context = context;
         this.courses = courses;
+        this.isEnrollmentAllowed = allowEnrollment;
     }
 
     @NonNull
     @Override
     public CoursesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        listBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.courses_list_item, parent, false);
+        CoursesListItemBinding listBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.courses_list_item, parent, false);
         return new CoursesViewHolder(listBinding);
     }
 
@@ -54,6 +56,11 @@ public class CoursesAdapter extends RecyclerView.Adapter<CoursesAdapter.CoursesV
             binding.courseBackground.setBackground(context.getResources().getDrawable(course.getBackground()));
             binding.courseName.setText(course.getName());
             binding.courseInstructor.setText(course.getInstructor().getName());
+
+            if (isEnrollmentAllowed)
+                binding.enrollButton.setVisibility(View.VISIBLE);
+            else
+                binding.enrollButton.setVisibility(View.INVISIBLE);
         }
     }
 }

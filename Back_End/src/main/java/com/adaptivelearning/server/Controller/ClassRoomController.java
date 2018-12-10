@@ -23,6 +23,7 @@ import java.util.Optional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
+
 import javax.validation.Valid;
 
 
@@ -34,6 +35,7 @@ public class ClassRoomController {
 
     @Autowired
     UserRepository userRepository;
+
 
     @PostMapping(Mapping.CLASSROOMS)
     ResponseEntity<ClassRoom> create(@Valid @RequestParam(Param.CATEGORY) String category,
@@ -134,5 +136,6 @@ public class ClassRoomController {
     @GetMapping(Mapping.CLASSROOMS)
     Optional<ClassRoom> findById(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classroomId) {
         return classRoomRepository.findById(classroomId);
+
     }
 }

@@ -7,5 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 
 public interface ClassRoomRepository extends CrudRepository<ClassRoom, Integer> {
+
     Iterable<ClassRoom> findByCreator(Long creatorId);
+
 }

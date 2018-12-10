@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.eng.asu.adaptivelearning.model.User;
-import com.eng.asu.adaptivelearning.model.UserType;
 import com.eng.asu.adaptivelearning.preferences.base.ObjectPreference;
 
 import javax.inject.Inject;
@@ -17,7 +16,7 @@ public class UserAccountStorage {
     @Inject
     public UserAccountStorage(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.userPreference = new ObjectPreference<>(sharedPreferences, "pref_user", new User(0,"Muhammed Sabry","moh",UserType.STUDENT,""), User.class);
+        this.userPreference = new ObjectPreference<>(sharedPreferences, "pref_user", new User(), User.class);
     }
 
     public User getUser() {
