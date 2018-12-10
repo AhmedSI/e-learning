@@ -15,4 +15,5 @@ public class Mapping {
     public static final String EnrollStudent = "/enroll";
     public static final String PARENTENROLL = "/parentenroll";
 
+    public static final String TeacherGetClassrooms = "/getTeacherClassrooms";
 }

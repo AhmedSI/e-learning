@@ -51,7 +51,7 @@ public class ClassRoomController {
             classRoomRepository.save(classRoom);
             return new ResponseEntity(new ApiResponse(200, " Classroom has been created"),
                     HttpStatus.OK);
-        } else {System.out.println(userRepository.findByEmail(user_email).getType());
+        } else {
             return new ResponseEntity(new ApiResponse(405, "type not allowed. Only a teacher could create a classroom"),
                     HttpStatus.FORBIDDEN);}
     }
