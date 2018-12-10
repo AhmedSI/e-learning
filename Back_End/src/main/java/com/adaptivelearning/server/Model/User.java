@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "client_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})

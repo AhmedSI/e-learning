@@ -51,12 +51,12 @@ public class ClassRoomController {
             classRoomRepository.save(classRoom);
             return new ResponseEntity(new ApiResponse(200, " Classroom has been created"),
                     HttpStatus.OK);
-        } else
+        } else {System.out.println(userRepository.findByEmail(user_email).getType());
             return new ResponseEntity(new ApiResponse(405, "type not allowed. Only a teacher could create a classroom"),
-                    HttpStatus.FORBIDDEN);
+                    HttpStatus.FORBIDDEN);}
     }
 
-    @GetMapping(Mapping.CLASSROOMS)
+    /*@GetMapping(Mapping.CLASSROOMS)
     Iterable<ClassRoom> read() {
         Object principal =  (SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         String user_email = ((UserPrincipal) principal).getEmail();
@@ -80,7 +80,7 @@ public class ClassRoomController {
             return new ArrayList<ClassRoom>();
         }
 
-    }
+    }*/
 
 
     @PutMapping(Mapping.CLASSROOMS)
