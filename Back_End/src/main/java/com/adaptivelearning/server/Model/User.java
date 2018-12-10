@@ -1,25 +1,17 @@
 package com.adaptivelearning.server.Model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.hibernate.annotations.NaturalId;
+
+import java.util.ArrayList;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "client_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
@@ -34,6 +26,7 @@ public class User {
     @Size(max = 40)
     private String name;
 
+
     @NaturalId
     @NotBlank
     @Size(max = 40)
@@ -44,21 +37,44 @@ public class User {
     @Size(max = 100)
     private String password;
 
+
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    @OneToMany(fetch = FetchType.EAGER,
+            mappedBy = "creator")
+    private List<ClassRoom> classrooms;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             mappedBy = "students")
     private List<ClassRoom> enrolls;
 
+
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            mappedBy = "parents")
+            mappedBy = "childs")
     private List<ClassRoom> joins;
+
+    @JsonIdentityInfo(generator= ObjectIdGenerators.IntSequenceGenerator.class, property="@id")
+    @OneToMany(fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},mappedBy = "parent")
+    private List<User> children;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "parent")
+    private User parent;
+
+    @Ignore
+    private String token;
+
 
     public User() {
 
@@ -135,4 +151,38 @@ public class User {
         this.joins = joins;
     }
 
+
+    public List<ClassRoom> getClassrooms() {
+        return classrooms;
+    }
+
+    public void setClassrooms(List<ClassRoom> classrooms) {
+        this.classrooms = classrooms;
+    }
+
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public List<User> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<User> children) {
+        this.children = children;
+    }
+
+    public User getParent() {
+        return parent;
+    }
+
+    public void setParent(User parent) {
+        this.parent = parent;
+    }
 }
+
