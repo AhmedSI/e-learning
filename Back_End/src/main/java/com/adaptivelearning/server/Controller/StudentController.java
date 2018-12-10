@@ -6,6 +6,7 @@ import com.adaptivelearning.server.Model.User;
 import com.adaptivelearning.server.Repository.ClassRoomRepository;
 
 import com.adaptivelearning.server.Repository.UserRepository;
+import com.adaptivelearning.server.Security.JwtTokenProvider;
 import com.adaptivelearning.server.Security.UserPrincipal;
 import com.adaptivelearning.server.constants.Mapping;
 import com.adaptivelearning.server.constants.Param;
@@ -30,15 +31,27 @@ public class StudentController {
 
     @Autowired
     ClassRoomRepository classRoomRepository;
+    @Autowired
+    JwtTokenProvider jwtTokenChecker;
 
     @SuppressWarnings("unchecked")
     @PostMapping(Mapping.EnrollStudent)
-    public void enrollStudent(@Valid @RequestParam(Param.CLASSROOM_ID) Integer classroomId,
-                                           @Valid @RequestParam(Param.PASSCODE) String passcode) {
+    public void enrollStudent(@RequestParam(Param.ACCESSTOKEN) String token,
+                              @Valid @RequestParam(Param.CLASSROOM_ID) Integer classroomId,
+                              @Valid @RequestParam(Param.PASSCODE) String passcode) {
+        //the new way
+        if (!userRepository.findByToken(token).isPresent())
+            throw new RestClientResponseException("Invalid token", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String user_email = ((UserPrincipal) principal).getEmail();
-        User user = userRepository.findByEmail(user_email);
+        if (!jwtTokenChecker.validateToken(token))
+            throw new RestClientResponseException("Session expired", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        //        //Long user_id = jwtTokenChecker.getUserIdFromToken(token);
+        User user = userRepository.findByToken(token).get();
+
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String user_email = ((UserPrincipal) principal).getEmail();
+//        User user = userRepository.findByEmail(user_email);
 
         if (!classRoomRepository.findById(classroomId).isPresent())
             throw new RestClientResponseException("Not found classroom", 404, "NotFound", HttpHeaders.EMPTY, null, null);

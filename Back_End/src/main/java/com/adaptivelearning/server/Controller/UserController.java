@@ -68,6 +68,8 @@ public class UserController {
 
         user.setToken(jwt);
 
+        userRepository.save(user);
+
         return user;
     }
 

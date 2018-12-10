@@ -7,6 +7,7 @@ public class Param {
     public static final String TYPE = "type";
     public static final String CLASSROOM_ID = "classroom_id";
     public static final String USER_ID = "user_id";
+    public static final String ACCESSTOKEN = "access_token";
 
     //for classrooms
     public static final String CATEGORY = "category";

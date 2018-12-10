@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -46,20 +47,41 @@ public class ParentController {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    JwtTokenProvider tokenProvider;
+    JwtTokenProvider jwtTokenChecker;
 
 
     @SuppressWarnings("unchecked")
     @PostMapping(Mapping.AddChild)
-    public void addChild(@Valid @RequestParam(Param.EMAIL) String email,
-                                      @Valid @RequestParam(Param.NAME) String name,
-                                      @Valid @RequestParam(Param.PASSWORD) String password) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String user_email = ((UserPrincipal) principal).getEmail();
-        User parent = userRepository.findByEmail(user_email);
+    public void addChild(@RequestParam(Param.ACCESSTOKEN) String token,
+                         @Valid @RequestParam(Param.EMAIL) String email,
+                         @Valid @RequestParam(Param.NAME) String name,
+                         @Valid @RequestParam(Param.PASSWORD) String password) {
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String user_email = ((UserPrincipal) principal).getEmail();
+//        User parent = userRepository.findByEmail(user_email);
+
+        //// the new way
+        if(!userRepository.findByToken(token).isPresent())
+            throw new RestClientResponseException("Invalid token", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        if (!jwtTokenChecker.validateToken(token))
+            throw new RestClientResponseException("Session expired", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        //        //Long user_id = jwtTokenChecker.getUserIdFromToken(token);
+        User parent = userRepository.findByToken(token).get();
+
+        if (parent.getType() != 3)
+            throw new RestClientResponseException("Not Allowed you are not a parent", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
 
         if (userRepository.existsByEmail(email))
             throw new RestClientResponseException("User present", 400, "Badrequest", HttpHeaders.EMPTY, null, null);
+
+        List<User> myChildren = parent.getChildren();
+        for (User child:myChildren){
+            if (child.getName().equals(name))
+                throw new RestClientResponseException("You added this child before", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+        }
+
 
         // Creating Child account
         User child = new User(name, email, password,4);
@@ -73,12 +95,23 @@ public class ParentController {
 
 
     @PostMapping(Mapping.PARENTENROLL)
-     public void enroll(@Valid @RequestParam(Param.USER_ID) long childId,
+     public void enroll(@RequestParam(Param.ACCESSTOKEN) String token,
+                        @Valid @RequestParam(Param.USER_ID) long childId,
                         @Valid @RequestParam(Param.CLASSROOM_ID) Integer classId,
                         @Valid @RequestParam(Param.PASSCODE) String passCode) {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String user_email = ((UserPrincipal) principal).getEmail();
-        User parent = userRepository.findByEmail(user_email);
+//        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        String user_email = ((UserPrincipal) principal).getEmail();
+//        User parent = userRepository.findByEmail(user_email);
+
+        //// the new way
+        if(!userRepository.findByToken(token).isPresent())
+            throw new RestClientResponseException("Invalid token", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        if (!jwtTokenChecker.validateToken(token))
+            throw new RestClientResponseException("Session expired", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        //        //Long user_id = jwtTokenChecker.getUserIdFromToken(token);
+        User parent = userRepository.findByToken(token).get();
 
         Optional<User> enrollChild = userRepository.findById(childId);
         Optional<ClassRoom> classRoomSearch = classRoomRepository.findById(classId);
