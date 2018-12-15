@@ -28,7 +28,7 @@
 >http://localhost:8080/enroll?access_token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTQ0ODk0MzQ2LCJleHAiOjE1NDU0OTkxNDZ9.xXlBHxIs-mjublF-vMEgAAoP-18t7Hfmg3AXEM0BRBJ4L7aI6BT0qUNkXVlIgJ_Y0OcnM4jVeYF6jNoGi81Vlw&classroom_id=35&passcode=mah67u
 
 ### Add child for a parent
->http://localhost:8080/parent/addchildaccess_token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTQ0ODk0MzQ2LCJleHAiOjE1NDU0OTkxNDZ9.xXlBHxIs-mjublF-vMEgAAoP18t7Hfmg3AXEM0BRBJ4L7aI6BT0qUNkXVlIgJ_Y0OcnM4jVeYF6jNoGi81Vlw&email=mohamed@hotmail.com&name=habeb baba&password=12345678
+>http://localhost:8080/parent/addchildaccess_token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTQ0ODk0MzQ2LCJleHAiOjE1NDU0OTkxNDZ9.xXlBHxIs-mjublF-vMEgAAoP18t7Hfmg3AXEM0BRBJ4L7aI6BT0qUNkXVlIgJ_Y0OcnM4jVeYF6jNoGi81Vlw&email=mohamed@hotmail.com&name=habebbaba&password=12345678
 
 ### join child into classroom
 >http://localhost:8080/parent/parentenroll?access_token=eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNTQ0ODk0MzQ2LCJleHAiOjE1NDU0OTkxNDZ9.xXlBHxIs-mjublF-vMEgAAoP-18t7Hfmg3AXEM0BRBJ4L7aI6BT0qUNkXVlIgJ_Y0OcnM4jVeYF6jNoGi81Vlw&user_id=2&classroom_id=7&passcode=mah67j
