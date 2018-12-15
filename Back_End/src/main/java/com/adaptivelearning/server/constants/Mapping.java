@@ -11,8 +11,9 @@ public class Mapping {
 
     //for classrooms
     public static final String CLASSROOMS = "/classrooms";
-    public static final String CLASSROOM = "/classroom/classroom";
-    public static final String CHILDRENCLASSROOMS = "/childrenclassrooms";
+    public static final String CLASSROOM = "/classroom";
+//    public static final String CHILDRENCLASSROOMS = "/childrenclassrooms";// check the commented method in ClassroomController
+                                                                            // it should be in the same method of the previous mapping
     public static final String AddChild = "/addchild";
     public static final String EnrollStudent = "/enroll";
     public static final String PARENTENROLL = "/parentenroll";

@@ -28,7 +28,8 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(Mapping.BASE_AUTH)
+//@RequestMapping(Mapping.BASE_AUTH)
+@RequestMapping(Mapping.PARENT)
 public class ParentController {
 
     @Autowired

@@ -23,7 +23,7 @@ import org.springframework.web.client.RestClientResponseException;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(Mapping.BASE_AUTH)
+//@RequestMapping(Mapping.BASE_AUTH)
 public class StudentController {
 
     @Autowired
