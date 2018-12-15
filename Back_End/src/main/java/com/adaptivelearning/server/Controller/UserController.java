@@ -48,7 +48,7 @@ public class UserController {
 
     @GetMapping(Mapping.LOGIN)
     public User authenticateUser(@Valid @RequestParam(Param.EMAIL) String email,
-                                          @Valid @RequestParam(Param.PASSWORD) String password) {
+                                 @Valid @RequestParam(Param.PASSWORD) String password) {
         User user = userRepository.findByEmail(email);
 
         //Do like this instead of optional
@@ -71,6 +71,19 @@ public class UserController {
         userRepository.save(user);
 
         return user;
+    }
+
+    @GetMapping(Mapping.LOGOUT)
+    public void KickOutUser(@RequestParam(Param.ACCESSTOKEN) String token){
+        if (!userRepository.findByToken(token).isPresent())
+            throw new RestClientResponseException("Not found token", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        if (!tokenProvider.validateToken(token))
+            throw new RestClientResponseException("Session expired", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        User user = userRepository.findByToken(token).get();
+        user.setToken("");
+        userRepository.save(user);
     }
 
     @SuppressWarnings("unchecked")
