@@ -1,4 +1,4 @@
-```java
+```javascript
 //Login example
 http://localhost:8080/api/auth/login?email=muhammed@gmail.com&password=12345678
 
