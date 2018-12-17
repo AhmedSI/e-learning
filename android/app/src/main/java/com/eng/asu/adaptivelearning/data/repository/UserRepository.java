@@ -57,4 +57,11 @@ public class UserRepository implements UserService {
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
+    @Override
+    public Observable<ResponseBody> createClassroom(String name, String category, int creator_id) {
+        return serviceApi.createClassroom(name, category, creator_id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
 }

@@ -70,6 +70,8 @@ public class UserViewModel extends AndroidViewModel {
         return userAccountStorage.getUser().getName();
     }
 
+    public int getUserId() { return userAccountStorage.getUser().getId(); }
+
     public Observable<User> login(String email, String password) {
         return userService.login(email, password).doOnNext(userAccountStorage::setUser);
     }
@@ -78,6 +80,13 @@ public class UserViewModel extends AndroidViewModel {
         List<Course> courses = new ArrayList<>();
         for (int i = 1; i <= 10; i++)
             courses.add(new Course("Classroom " + i, new User(i, "Dr.Number " + i, "", TEACHER, ""), getRandomBackground()));
+
+        return courses;
+    }
+    public List<Course> getCourses2() {
+        List<Course> courses = new ArrayList<>();
+        for (int i = 1; i <= 10; i++)
+            courses.add(new Course("Course " + i, new User(i, "", "", TEACHER, ""), getRandomBackground()));
 
         return courses;
     }
@@ -98,5 +107,9 @@ public class UserViewModel extends AndroidViewModel {
 
     public boolean allowEnrollment() {
         return userAccountStorage.getUser().getType() == STUDENT || userAccountStorage.getUser().getType() == PARENT;
+    }
+
+    public Observable<ResponseBody> createClassroom(String name, String category, int creator_id) {
+        return userService.createClassroom(name, category, creator_id);
     }
 }

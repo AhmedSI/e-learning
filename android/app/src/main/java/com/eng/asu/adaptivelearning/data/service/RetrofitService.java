@@ -21,4 +21,11 @@ public interface RetrofitService {
 
     @GET("/api/auth/login")
     Observable<User> login(@Query("email") String email, @Query("password") String password);
+
+    @FormUrlEncoded
+    @POST("createClassroom")
+    Observable<ResponseBody> createClassroom(
+            @Field("name") String name,
+            @Field("category") String category,
+            @Field("type") int type);
 }
