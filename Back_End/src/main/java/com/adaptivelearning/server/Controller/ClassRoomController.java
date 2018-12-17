@@ -93,43 +93,10 @@ public class ClassRoomController {
             return user.getJoins();
         }
         else {
-            return new ArrayList<ClassRoom>();
+            return new ArrayList<>();
         }
 
     }
-
-    //don't delete this it's need to be implemented
-    //// i'm sorry i'm tired of thinking so please someone check this retrieve you have to retrieve classrooms of children of this guy, enjoy!
-//    @GetMapping(Mapping.CHILDRENCLASSROOMS)
-//    Map<User,List<ClassRoom>> retrieveChildrenClassrooms(@RequestParam(Param.ACCESSTOKEN) String token) {
-//        //// the new way
-//        if (!userRepository.findByToken(token).isPresent())
-//            throw new RestClientResponseException("Invalid token", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
-//
-//        if (!jwtTokenChecker.validateToken(token))
-//            throw new RestClientResponseException("Session expired", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
-//
-//        //        //Long user_id = jwtTokenChecker.getUserIdFromToken(token);
-//        User user = userRepository.findByToken(token).get();
-//
-//        if(user.getType()!=3)
-//            throw new RestClientResponseException("User is not a teacher", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
-//
-//        Map<User,List<ClassRoom>> childrensClassrooms = new HashMap<>();
-//        List<User> children = userRepository.findAllByParent(user);
-//        for (int i =0;i<children.size();i++){
-//            Iterable<ClassRoom> classRoomsIterable = classRoomRepository.findByChilds_ChildId(children.get(i).getId());
-//            List<ClassRoom> classRoomsList = new ArrayList<ClassRoom>();
-//            for (ClassRoom classroom:
-//                    classRoomsIterable){
-//                classRoomsList.add(classroom);
-//            }
-//            childrensClassrooms.put(children.get(i), classRoomsList);
-//        }
-//        return childrensClassrooms;
-//
-//
-//    }
 
 
     @PutMapping(Mapping.CLASSROOMS)

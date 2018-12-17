@@ -9,12 +9,15 @@ public class Mapping {
     public static final String PARENT = "/parent";
 
 
-    //for classrooms
+    //for classrooms & common for student,teacher and childs
     public static final String CLASSROOMS = "/classrooms";
     public static final String CLASSROOM = "/classroom";
-//    public static final String CHILDRENCLASSROOMS = "/childrenclassrooms";// check the commented method in ClassroomController
-                                                                            // it should be in the same method of the previous mapping
-    public static final String AddChild = "/addchild";
+
+    //Student
     public static final String EnrollStudent = "/enroll";
+
+    //parent
+    public static final String AddChild = "/addchild";
     public static final String PARENTENROLL = "/parentenroll";
+    public static final String PARENTCHILDREN = "/children";
 }

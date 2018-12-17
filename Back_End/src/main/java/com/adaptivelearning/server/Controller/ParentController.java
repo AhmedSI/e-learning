@@ -16,10 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
@@ -139,7 +136,36 @@ public class ParentController {
         ClassRoom classRoom = classRoomSearch.get();
 
         classRoom.getChilds().add(enrollChild.get());
+
+        User child = enrollChild.get();
+
+        child.getJoins().add(classRoom);
+
+        userRepository.save(child);
+
         classRoomRepository.save(classRoom);
+
+    }
+
+    @GetMapping(Mapping.PARENTCHILDREN)
+    List<User> retrieveChildren(@RequestParam(Param.ACCESSTOKEN) String token) {
+        //// the new way
+        if (!userRepository.findByToken(token).isPresent())
+            throw new RestClientResponseException("Invalid token", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        if (!jwtTokenChecker.validateToken(token))
+            throw new RestClientResponseException("Session expired", 400, "BadRequest", HttpHeaders.EMPTY, null, null);
+
+        //        //Long user_id = jwtTokenChecker.getUserIdFromToken(token);
+        User user = userRepository.findByToken(token).get();
+
+        if(user.getType()!=3)
+            throw new RestClientResponseException("User is not a parent", 405, "NotAllowed", HttpHeaders.EMPTY, null, null);
+
+
+//        return userRepository.findAllByParent(user);
+
+        return user.getChildren();
 
     }
 
