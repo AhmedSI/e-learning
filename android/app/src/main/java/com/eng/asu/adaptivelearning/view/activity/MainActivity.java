@@ -1,6 +1,7 @@
 package com.eng.asu.adaptivelearning.view.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        mainBinding.createClass.setOnClickListener(view -> onCreateClassroomClicked());
         createWelcomeToast();
         initializeActivity();
     }
@@ -44,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void createWelcomeToast() {
         Toast.makeText(this, "Welcome " + userViewModel.getUserName() + " :)", Toast.LENGTH_SHORT).show();
+    }
+
+    public void onCreateClassroomClicked(){
+        startActivity(new Intent(MainActivity.this, CreateClassroomActivity.class));
     }
 
     @Override
