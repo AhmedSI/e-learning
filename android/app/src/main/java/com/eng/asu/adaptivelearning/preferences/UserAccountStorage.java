@@ -16,7 +16,7 @@ public class UserAccountStorage {
     @Inject
     public UserAccountStorage(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.userPreference = new ObjectPreference<>(sharedPreferences, "pref_user", null, User.class);
+        this.userPreference = new ObjectPreference<>(sharedPreferences, "pref_user", new User(), User.class);
     }
 
     public User getUser() {

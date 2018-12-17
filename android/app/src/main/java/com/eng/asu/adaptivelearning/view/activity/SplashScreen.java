@@ -1,9 +1,9 @@
-package com.eng.asu.adaptivelearning.view;
+package com.eng.asu.adaptivelearning.view.activity;
 
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.eng.asu.adaptivelearning.R;

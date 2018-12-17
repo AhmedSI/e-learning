@@ -1,0 +1,2 @@
+Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+String user_email = ((UserPrincipal) principal).getEmail();

@@ -5,8 +5,20 @@ public class User {
     private int id;
     private String name;
     private String email;
-    private UserType type;
-    private String accessToken;
+    private int type;
+    private String token;
+    private String password;
+
+    public User() {
+    }
+
+    public User(int id, String name, String email, int type, String accessToken) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.type = type;
+        this.token = accessToken;
+    }
 
     public int getId() {
         return id;
@@ -32,19 +44,19 @@ public class User {
         this.email = email;
     }
 
-    public UserType getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(UserType type) {
+    public void setType(int type) {
         this.type = type;
     }
 
     public String getToken() {
-        return accessToken;
+        return token;
     }
 
     public void setToken(String token) {
-        this.accessToken = token;
+        this.token = token;
     }
 }

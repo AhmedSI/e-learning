@@ -1,16 +1,14 @@
 package com.eng.asu.adaptivelearning.viewmodel;
 
 import android.app.Application;
-import android.content.Context;
 import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.eng.asu.adaptivelearning.LearningApplication;
 import com.eng.asu.adaptivelearning.R;
-import com.eng.asu.adaptivelearning.Retrofit.ApiClient;
+import com.eng.asu.adaptivelearning.data.service.UserService;
 import com.eng.asu.adaptivelearning.model.Course;
 import com.eng.asu.adaptivelearning.model.User;
-import com.eng.asu.adaptivelearning.model.UserType;
 import com.eng.asu.adaptivelearning.preferences.UserAccountStorage;
 import com.eng.asu.adaptivelearning.view.activity.LoginActivity;
 import com.eng.asu.adaptivelearning.view.activity.MainActivity;
@@ -26,10 +24,18 @@ import javax.inject.Inject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.AndroidViewModel;
+import io.reactivex.Observable;
+import okhttp3.ResponseBody;
+
+import static com.eng.asu.adaptivelearning.model.UserType.PARENT;
+import static com.eng.asu.adaptivelearning.model.UserType.STUDENT;
+import static com.eng.asu.adaptivelearning.model.UserType.TEACHER;
 
 public class UserViewModel extends AndroidViewModel {
     @Inject
     UserAccountStorage userAccountStorage;
+    @Inject
+    UserService userService;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
@@ -43,9 +49,8 @@ public class UserViewModel extends AndroidViewModel {
             return LoginActivity.class;
     }
 
-    private boolean isUserLoggedIn() {
-        //TODO --- check for the current access token if it's valid or not
-        return false;
+    public boolean isUserLoggedIn() {
+        return !TextUtils.isEmpty(userAccountStorage.getUser().getToken());
     }
 
     public boolean isValidPassword(String password) {
@@ -65,18 +70,14 @@ public class UserViewModel extends AndroidViewModel {
         return userAccountStorage.getUser().getName();
     }
 
-    public void login(String email, String password) {
-        User user = new User();
-        user.setEmail(email);
-        user.setId(1);
-        user.setName("Muhammed Sabry");
-        userAccountStorage.setUser(user);
+    public Observable<User> login(String email, String password) {
+        return userService.login(email, password).doOnNext(userAccountStorage::setUser);
     }
 
     public List<Course> getCourses() {
         List<Course> courses = new ArrayList<>();
         for (int i = 1; i <= 10; i++)
-            courses.add(new Course("Course number " + i, new User(i, "Dr.Number " + i, "", UserType.TEACHER, ""), getRandomBackground()));
+            courses.add(new Course("Classroom " + i, new User(i, "Dr.Number " + i, "", TEACHER, ""), getRandomBackground()));
 
         return courses;
     }
@@ -94,8 +95,15 @@ public class UserViewModel extends AndroidViewModel {
         return backgrounds.get(new Random().nextInt(3));
     }
 
-    public void Register(String name, String email, String password, String type, Context context){
-        ApiClient apiClient = new ApiClient();
-        apiClient.createuser(name, email, password, type, context);
+    public Observable<ResponseBody> Register(String email, String password, String name, int type) {
+        return userService.createUser(email, password, name, type);
+    }
+
+    public boolean allowCourseCreation() {
+        return userAccountStorage.getUser().getType() == TEACHER;
+    }
+
+    public boolean allowEnrollment() {
+        return userAccountStorage.getUser().getType() == STUDENT || userAccountStorage.getUser().getType() == PARENT;
     }
 }
