@@ -1,4 +1,0 @@
-Colors:
-	#212c39 //dark blue
-	#a0f7a0 //mint green
-	#F7F7F7 //light grey for background

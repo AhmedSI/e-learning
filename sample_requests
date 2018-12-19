@@ -1,5 +1,0 @@
-##Login example
-http://localhost:8080/api/auth/login?email=muhammed@gmail.com&password=12345678
-
-##Register example
-http://localhost:8080/api/auth/register?email=muhammed@gmail.com&password=12345678&name=%22muhammed%22&type=1
