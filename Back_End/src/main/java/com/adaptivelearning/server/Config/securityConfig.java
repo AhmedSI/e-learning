@@ -84,8 +84,11 @@ public class securityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/api/polls/**", "/api/users/**")
                 .permitAll()
-                .anyRequest()
-                .authenticated();
+                ;
+        // // the reason why i commented those lines that the integration with android should be with a request parameter
+        // // and there is no need for authorization in the headers
+//                .anyRequest()
+//                .authenticated();
 
         // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
